@@ -2,7 +2,7 @@
     "name": "patiphon/php_core_mvc",
     "autoload": {
         "psr-4": {
-            "Patiphon\\PhpCoreMvc\\": "src/"
+            "Patiphon\\PhpCoreMvc\\": "./"
         }
     },
     "authors": [

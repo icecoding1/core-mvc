@@ -1,6 +1,6 @@
 <?php
 
-namespace app\core;
+namespace Patiphon\PhpCoreMvc;
 
 use app\controllers\SiteController;
 

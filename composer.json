@@ -1,0 +1,15 @@
+{
+    "name": "patiphon/php_core_mvc",
+    "autoload": {
+        "psr-4": {
+            "Patiphon\\PhpCoreMvc\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "pong dev beginer",
+            "email": "patiphonpracticwork001@gmail.com"
+        }
+    ],
+    "require": {}
+}

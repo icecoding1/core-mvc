@@ -5,6 +5,9 @@ namespace Patiphon\PhpCoreMvc;
 class Request
 {
 
+
+  public array $routeParams = [];
+
   public function getPart()
   {
     $part = $_SERVER['REQUEST_URI'];
@@ -18,6 +21,12 @@ class Request
     return $part;
 
     exit;
+  }
+
+  public function getPartAll()
+  {
+    $part = $_SERVER['REQUEST_URI'];
+    return $part;
   }
 
   public function getMethod()
@@ -48,5 +57,21 @@ class Request
       }
     }
     return $body;
+  }
+
+  public function setRouteParams($params)
+  {
+    $this->routeParams = $params;
+    return $this;
+  }
+
+  public function getRouteParams()
+  {
+    return $this->routeParams;
+  }
+
+  public function getRouteParam($param, $default = null)
+  {
+    return $this->routeParams[$param] ?? $default;
   }
 }

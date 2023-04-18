@@ -11,6 +11,8 @@ class Application
   public Rounter  $rounter;
   public Request  $request;
   public Database  $database;
+  public View  $view;
+  public Session  $session;
   static  public $arr = [];
 
   public function __construct($rootPart, array $config)
@@ -20,24 +22,14 @@ class Application
     $this->rounter = new Rounter();
     $this->response = new Response();
     $this->request = new Request();
+    $this->view = new View();
+    $this->session = new Session();
     $this->database = new Database($config);
   }
 
   public function run()
   {
     // return ค่าจะไม่ออกมา
-    // for test 
-    // print_r($this->rounter->rountes_chck);
     echo $this->rounter->reslove();
-  }
-
-  public function echo()
-  {
-    return 'Welcome To My Website';
-  }
-
-  public function echo_home($message)
-  {
-    return $message;
   }
 }

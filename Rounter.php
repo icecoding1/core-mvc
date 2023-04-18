@@ -23,9 +23,9 @@ class Rounter
     $this->err_log = new LogException();
   }
 
-  public function check_middle($key, $middleware)
+  public function check_middle($key, $name, $middleware)
   {
-    $this->rountes_chck[$key][$middleware] = $middleware;
+    $this->rountes_chck[$key][$name] = $middleware;
 
     return $this;
   }
@@ -36,13 +36,19 @@ class Rounter
     return $name_middle;
   }
 
+  public function call_nameMiddleGetcheck($method, $middleware)
+  {
+    $detail_middle = isset($this->rountes[$method][$middleware]) ? $this->rountes[$method][$middleware] : false;
+    return $detail_middle;
+  }
+
   public function get(string $path, $callback, $middleware = null)
   {
     if ($middleware != null) {
       $path_rount = substr($path, 1);
       $path_rount = explode('/', $path_rount);
       $path_rount = $path_rount[0];
-      $this->check_middle('/' . $path_rount, $middleware);
+      $this->check_middle($path, $path_rount, $middleware);
     }
     $this->rountes['get'][$path] =  $callback;
   }
@@ -57,7 +63,11 @@ class Rounter
     return $this->rountes[$method] ?? [];
   }
 
-  public function getCallback()
+  public function getDetailRouteMap()
+  {
+  }
+
+  public function getCallback($recieve = 1)
   {
     $method = $this->request->getMethod();
     $url = $this->request->getPart();
@@ -71,6 +81,12 @@ class Rounter
 
     // Start iterating registed routes
     foreach ($routes as $route => $callback) {
+
+      $path_all = $route;
+      $path_rount = substr($route, 1);
+      $path_rount = explode('/', $path_rount);
+      $path_rount = $path_rount[0];
+
       // Trim slashes
       $route = trim($route, '/');
       $routeNames = [];
@@ -98,7 +114,12 @@ class Rounter
 
         // save param
         $this->request->setRouteParams($routeParams);
-        return $callback;
+        if ($recieve == 1) {
+          return $callback;
+        } else if ($recieve == 2) {
+          $call_nameMiddle = $this->call_nameMiddle($path_all, $path_rount);
+          return $call_nameMiddle;
+        }
       }
     }
 
@@ -117,22 +138,26 @@ class Rounter
     $path_call = '/' . $path_rount;
 
     // for call middleware
-    $call_nameMiddle = $this->call_nameMiddle($path_call, $path_rount);
-
-    if ($call_nameMiddle != false) {
-      Middlewares::getMiddlewares($call_nameMiddle);
-    }
+    $call_nameMiddle = $this->call_nameMiddle($part, $path_rount);
 
 
     $callback = !empty($this->rountes[$method][$part]) ? $this->rountes[$method][$part] : false;
     if (!$callback) {
       $callback =  $this->getCallback();
+      $call_nameMiddle =  $this->getCallback(2);
 
       if ($callback == false) {
         Application::$app->response->setStatusCode($this->err_log->status);
         return $this->renderContent_notfound('not_found', ["status" => $this->err_log->status, "message" => $this->err_log->message]);
       }
     }
+
+    if ($call_nameMiddle != false) {
+      $callback_middle = [Middlewares::class, $call_nameMiddle];
+      $callback_middle[0] = new $callback_middle[0]();
+      call_user_func($callback_middle);
+    }
+
     if (is_string($callback)) {
       return $this->renderView($callback);
     }

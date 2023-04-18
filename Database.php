@@ -81,6 +81,28 @@ class Database
   }
 
 
+  public function downMigration()
+  {
+    $files = scandir(Application::$ROOT_DIR . '/migrations');
+    foreach ($files as $migration) {
+      if ($migration === '.' || $migration === '..') {
+        continue;
+      }
+
+      // path migrations
+      require_once Application::$ROOT_DIR . '/migrations/' . $migration;
+      $className = pathinfo($migration, PATHINFO_FILENAME);
+      $instance = new $className();
+      $this->log("Down.. migration $migration");
+      $instance->down();
+      $this->log("Down success migration $migration");
+    }
+
+    $this->Delmigration();
+    $this->log("Drop table migrations");
+  }
+
+
   public function Savemigration(array $name_menu)
   {
     $date_now = date("Y-m-d H:i:s");
@@ -89,6 +111,12 @@ class Database
       $insert = self::$db->prepare($sql);
       $insert->execute([$name_menu['menu'], $date_now]);
     }
+  }
+
+  public function Delmigration()
+  {
+    $sql = 'drop table IF EXISTS migration';
+    return self::$db->exec($sql);
   }
 
   public function log($message)

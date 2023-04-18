@@ -30,6 +30,9 @@ class Application
   public function run()
   {
     // return ค่าจะไม่ออกมา
+    echo "<pre>";
+    // print_r($this->rounter->rountes);
+    echo "</pre>";
     echo $this->rounter->reslove();
   }
 }

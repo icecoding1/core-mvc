@@ -4,10 +4,10 @@ namespace Patiphon\PhpCoreMvc;
 
 class View
 {
-  public function layoutFunc()
+  public function layoutFunc($layout = 'content')
   {
     ob_start();
-    include_once Application::$ROOT_DIR . "/views/layout/content.php";
+    include_once Application::$ROOT_DIR . "/views/layout/$layout.php";
     return ob_get_clean();
   }
 

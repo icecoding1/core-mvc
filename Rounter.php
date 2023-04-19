@@ -184,6 +184,13 @@ class Rounter
     return   $view_lead;
   }
 
+  public function renderView_mana($view, $param = [])
+  {
+    $layout = Application::$app->view->layoutFunc('management');
+    $view_lead = Application::$app->view->readOnlyView($view, $param);
+    return str_replace('{{content}}', $view_lead, $layout);
+  }
+
 
   public function renderContent_notfound($view, array $param)
   {
